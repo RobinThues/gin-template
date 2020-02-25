@@ -1,0 +1,16 @@
+{{ define "todo/list.tmpl" }}
+<html>
+<head>
+    <title>List of Todos</title>
+</head>
+Greeting: {{ .greeting }}<br>
+<form method="POST" action="/todos">
+<input type="text" name="text"></input>
+<button>Submit</button>
+</form>
+{{ range .todos }}
+    {{ template "todo/todo.tmpl" . }}<br>
+{{ end }}
+<img src="assets/artwork.jpg">
+</html>
+{{ end }}
