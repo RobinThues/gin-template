@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/robinthues/gin-template/todo"
 	"html/template"
+	"log"
 	"net/http"
 	"time"
 
@@ -31,7 +32,9 @@ func main() {
 	r.POST("/todos", todo.CreateTodo)
 	r.GET("/ping", ping)
 
-	r.Run(":8080")
+	if err :=r.Run(":8080"); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func ping(c *gin.Context) {
