@@ -3,6 +3,7 @@
 <head>
     <title>List of Todos</title>
 </head>
+<body style="background-color: dimgray;">
 Greeting: {{ .greeting }}<br>
 <form method="POST" action="/todos">
 <input type="text" name="text"></input>
@@ -12,5 +13,6 @@ Greeting: {{ .greeting }}<br>
     {{ template "todo/todo.tmpl" . }}<br>
 {{ end }}
 <!-- img src="assets/artwork.jpg" -->
+</body>
 </html>
 {{ end }}
