@@ -11,15 +11,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
-
 func formatAsDate(t time.Time) string {
 	year, month, day := t.Date()
 	return fmt.Sprintf("%d%02d/%02d", year, month, day)
 }
 
-func main() {
-	r := gin.Default()
+func setupRouter() (r *gin.Engine) {
+	r = gin.Default()
 	r.SetFuncMap(template.FuncMap{
 		"formatAsDate": formatAsDate,
 	})
@@ -29,17 +27,15 @@ func main() {
 
 	r.Use(FormatMiddleware())
 
-	// add a testing todo
-	todo.TodoDb.SaveTodo(todo.Todo{
-		Id:     0,
-		Text:   "hello world",
-		IsDone: false,
-	})
-
 	r.GET("/todos", todo.GetTodos)
 	r.GET("/todo/:id/done", todo.MarkTodoAsDone)
 	r.POST("/todos", todo.CreateTodo)
 	r.GET("/ping", ping)
+	return
+}
+
+func main() {
+	r := setupRouter()
 
 	if err :=r.Run(":8080"); err != nil {
 		log.Fatal(err)

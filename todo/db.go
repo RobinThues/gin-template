@@ -7,6 +7,15 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+const (
+	sqlite3      = "sqlite3"
+	createQuery  = "CREATE TABLE IF NOT EXISTS todos (id INTEGER PRIMARY KEY, text TEXT, isDone BOOLEAN)"
+	updateQuery  = "REPLACE INTO todos (id, text, isDone) VALUES (?, ?, ?)"
+	findQuery    = "SELECT id, text, isDone FROM todos WHERE id = ?"
+	findAllQuery = "SELECT id, text, isDone FROM todos"
+	insertQuery  = "INSERT INTO todos (text, isDone) VALUES (?, ?)"
+)
+
 var TodoDb TodoDatabase
 
 func init() {
@@ -25,13 +34,19 @@ type SqliteTodoDatabase struct {
 }
 
 func NewSqliteTodoDatabase(file string) *SqliteTodoDatabase {
-	database, err := sql.Open("sqlite3", file)
+	database, err := sql.Open(sqlite3, file)
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	createStatement, _ := database.Prepare("CREATE TABLE IF NOT EXISTS todos (id INTEGER PRIMARY KEY, text TEXT, isDone BOOLEAN)")
-	createStatement.Exec()
+	createStatement, err := database.Prepare(createQuery)
+	if err != nil {
+		fmt.Println("onCreate", err)
+	}
+	_, err = createStatement.Exec()
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	sqliteDb := SqliteTodoDatabase{
 		db: database,
@@ -40,7 +55,7 @@ func NewSqliteTodoDatabase(file string) *SqliteTodoDatabase {
 }
 
 func (db *SqliteTodoDatabase) SaveTodo(todo Todo) {
-	insertStatement, err := db.db.Prepare("REPLACE INTO todos (id, text, isDone) VALUES (?, ?, ?)")
+	insertStatement, err := db.db.Prepare(updateQuery)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -51,7 +66,7 @@ func (db *SqliteTodoDatabase) SaveTodo(todo Todo) {
 }
 
 func (db *SqliteTodoDatabase) FindTodo(id int) *Todo {
-	rows, _ := db.db.Query("SELECT id, text, isDone FROM todos WHERE id = ?", id)
+	rows, _ := db.db.Query(findQuery, id)
 	var foundId int
 	var text string
 	var isDone bool
@@ -67,7 +82,7 @@ func (db *SqliteTodoDatabase) FindTodo(id int) *Todo {
 }
 
 func (db *SqliteTodoDatabase) FindTodos() Todos {
-	rows, err :=  db.db.Query("SELECT id, text, isDone FROM todos")
+	rows, err := db.db.Query(findAllQuery)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -88,7 +103,7 @@ func (db *SqliteTodoDatabase) FindTodos() Todos {
 }
 
 func (db *SqliteTodoDatabase) InsertTodo(todo Todo) {
-	insertStatement, err := db.db.Prepare("INSERT INTO todos (text, isDone) VALUES (?, ?)")
+	insertStatement, err := db.db.Prepare(insertQuery)
 	if err != nil {
 		fmt.Println(err)
 	}
