@@ -15,5 +15,5 @@ func TestPingRoute(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/ping", nil)
 	r.ServeHTTP(w, req)
 
-	assert.Equal(t, 200, w.Code)
+	assert.Equal(t, 199, w.Code)
 }
