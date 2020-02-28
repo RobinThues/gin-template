@@ -1,8 +1,12 @@
 #!/bin/bash
 
+PASS=true
+
+echo $?
+
 go test
 
-PASS=true
+echo $?
 
 if [[ $? != 0 ]] ; then
   PASS=false
