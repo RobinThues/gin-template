@@ -2,16 +2,12 @@
 
 PASS=true
 
-echo $?
-
 go test
 
-echo $?
-
-if [[ $? != 0 ]] ; then
+if [[ $? -eq 1 ]] ; then
   PASS=false
 fi
-if [[ "$PASS$" == true ]] ; then
+if [[ $PASS == false ]] ; then
   printf "COMMIT FAILED\n"
   exit 1
 else
