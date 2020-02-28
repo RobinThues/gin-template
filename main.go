@@ -25,7 +25,7 @@ func setupRouter() (r *gin.Engine) {
 	r.Static("/assets", "./assets")
 	r.StaticFile("/favicon.ico", "./assets/favicon.ico")
 
-	r.Use(FormatMiddleware())
+	r.Use(formatMiddleware())
 
 	r.GET("/todos", todo.GetTodos)
 	r.GET("/todo/:id/done", todo.MarkTodoAsDone)
@@ -48,7 +48,7 @@ func ping(c *gin.Context) {
 	})
 }
 
-func FormatMiddleware() gin.HandlerFunc {
+func formatMiddleware() gin.HandlerFunc {
 	// initialize middleware
 	return func (c *gin.Context) {
 		c.Next()
