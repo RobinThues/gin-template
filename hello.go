@@ -11,6 +11,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+
+
 func formatAsDate(t time.Time) string {
 	year, month, day := t.Date()
 	return fmt.Sprintf("%d%02d/%02d", year, month, day)
@@ -26,6 +28,13 @@ func main() {
 	r.StaticFile("/favicon.ico", "./assets/favicon.ico")
 
 	r.Use(FormatMiddleware())
+
+	// add a testing todo
+	todo.TodoDb.SaveTodo(todo.Todo{
+		Id:     0,
+		Text:   "hello world",
+		IsDone: false,
+	})
 
 	r.GET("/todos", todo.GetTodos)
 	r.GET("/todo/:id/done", todo.MarkTodoAsDone)

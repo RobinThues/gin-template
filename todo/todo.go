@@ -14,20 +14,9 @@ type Todo struct {
 
 type Todos = []*Todo
 
-var todos Todos
-var counter int
-
-func newTodo(text string) *Todo {
-	t := Todo{
-		Id:     counter,
-		Text:   text,
-		IsDone: false,
-	}
-	counter += 1
-	return &t
-}
-
 func GetTodos(c *gin.Context) {
+	todos := TodoDb.FindTodos()
+
 	c.Set("data", gin.H{
 		"todos": todos,
 		"greeting": "Please add a todo below",
@@ -37,16 +26,20 @@ func GetTodos(c *gin.Context) {
 
 func MarkTodoAsDone(c *gin.Context) {
 	parameterId, _ := strconv.Atoi(c.Param("id"))
-	for _, t := range todos {
-		if t.Id == parameterId {
-			t.IsDone = true
-		}
-	}
+
+	t := TodoDb.FindTodo(parameterId)
+	t.IsDone = true
+	TodoDb.SaveTodo(*t)
+
 	c.Redirect(http.StatusSeeOther, "/todos")
 }
 
 func CreateTodo(c *gin.Context) {
 	text := c.PostForm("text")
-	todos = append(todos, newTodo(text))
+	TodoDb.InsertTodo(Todo{
+		Id:     0,
+		Text:   text,
+		IsDone: false,
+	})
 	c.Redirect(http.StatusSeeOther, "/todos")
 }
